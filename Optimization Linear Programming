@@ -1,0 +1,101 @@
+# import pulp
+from pulp import LpVariable, LpProblem, LpMaximize, LpStatus, value, LpMinimize
+
+# Question 1
+# define variables
+
+x1 = LpVariable("x1", 0, None) # x1>=0
+x2 = LpVariable("x2", 0, None) # x2>=0
+x3 = LpVariable("x3", 0, None) # x3>=0
+y1 = LpVariable("y1", 0, None) # y1>=0
+y2 = LpVariable("y2", 0, None) # y2>=0
+y3 = LpVariable("y3", 0, None) # y3>=0
+z1 = LpVariable("z1", 0, None) # z1>=0
+z2 = LpVariable("z2", 0, None) # z2>=0
+z3 = LpVariable("z3", 0, None) # z3>=0
+p = 0.7
+d1 = 30
+d2 = 20
+d3 = 40
+
+# defines the problem
+prob = LpProblem("problem", LpMinimize)
+# Note, LpMaximize for a maximization problem, 
+# and LpMinimize for a minimization problem
+
+# regular labor constraint
+prob += x1 <= 27
+prob += x2 <= 27
+prob += x3 <= 27
+
+# Demand constraints
+prob += x1+y1 >= d1
+prob += x2+y2 >= d2
+prob += x3+y3 >= d3
+
+# inventory contraints
+prob += (p*(x1+y1))-(d1-20) == z1
+prob += (z1+p*(x2+y2))-d2 == z2
+prob += z2+(p*x3)+(p*y3) == d3
+
+
+# define objective function
+prob += 40*(x1+x2+x3) + 60*(y1+y2+y3) + 15*(z1+z2+z3)
+
+# solve the problem
+status = prob.solve()
+print(f"Question 1")
+print(f"status={LpStatus[status]}")
+
+# print the results
+for variable in prob.variables():
+    print(f"{variable.name} = {variable.varValue}")
+    
+print(f"Objective = {value(prob.objective)}")
+print(f"")
+
+# Problem 2
+# define variables
+
+a1 = LpVariable("a1", 0, None) # a1>=0
+a2 = LpVariable("a2", 0, None) # a2>=0
+a3 = LpVariable("a3", 0, None) # a3>=0
+b1 = LpVariable("b1", 0, None) # b1>=0
+b2 = LpVariable("b2", 0, None) # b2>=0
+b3 = LpVariable("b3", 0, None) # b3>=0
+
+# defines the problem
+probs = LpProblem("problem", LpMaximize)
+# Note, LpMaximize for a maximization problem, 
+# and LpMinimize for a minimization problem
+
+# capacity of plant and hours required to make products
+probs += 2*a1 + 3*a2 + 4*a3   <= 200
+probs += 3*a1 + 5*a2 + 6*a3   <= 120
+probs += 4*a1 + 7*a2 + 9*a3   <= 160
+probs += 9*a1+15*a2+19*a3 <= 350
+# Note, if <= then <=
+# If >= then >=
+# If = then ==
+
+# employee hours and workers quantity allocated
+probs += 2*a1 + 3*a2 + 4*a3   <= 35*b1
+probs += 3*a1 + 5*a2 + 6*a3   <= 35*b2
+probs += 4*a1 + 7*a2 + 9*a3   <= 35*b3
+probs += b1+b2+b3 <= 10
+
+
+# define objective function
+probs += 6*a1+8*a2+10*a3
+
+# solve the problem
+status = probs.solve()
+print(f"Question 2")
+print(f"status={LpStatus[status]}")
+
+# print the results
+for variable in probs.variables():
+    print(f"{variable.name} = {variable.varValue}")
+    
+print(f"Objective = {value(probs.objective)}")
+print(f"")
