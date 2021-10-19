@@ -1,0 +1,37 @@
+#Scraping in HTML
+
+parsed_html = bsoup(response,"lxml")
+list = parsed_html.find_all('tr') #to get the headers
+
+my_result_list = [] #empty place to combine headers+sublist
+for row in list:
+    new_list=[] #place to put sublist
+    for x in row.find_all('td'):
+        new_list.append(x.text) #put the sublist in one place
+    my_result_list.append(new_list) #add the sublist to the headers list
+    
+print(my_result_list)
+
+#Scraping using JSON
+
+import requests
+
+search_url = '#insertpeterbashilink#'
+response = requests.get(search_url, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"}).json()
+ 
+
+numJumpShotsAttempt = 0
+numJumpShotsMade = 0
+
+for shot in response:
+    if shot["ACTION_TYPE"]=="Jump Shot":
+        numJumpShotsAttempt = numJumpShotsAttempt+1 #looking for all the jump shots made by a basketball player
+    if shot["ACTION_TYPE"]=="Jump Shot" and shot["EVENT_TYPE"]=="Made Shot": #no. of successful shots
+        numJumpShotsMade = numJumpShotsMade+1
+
+percJumpShotMade = (numJumpShotsMade/numJumpShotsAttempt)*100 #calculating the percentage
+
+
+            
+print(percJumpShotMade)
