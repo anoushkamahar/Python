@@ -1,5 +1,39 @@
+#Scraping in XML
+#Taking out temperature of a particular state and 
+import requests
+from lxml import objectify
+
+num_periods = 4
+parameter = 'Average Temperature'
+state_id = '44'
+month_num = '08'
+year = '2016'
+
+
+URL_template = 'https://www.ncdc.noaa.gov/cag/statewide/rankings/%s-tavg-%s%s/data.xml'
+
+URL = URL_template % (state_id,year,month_num)
+response = requests.get(URL).content
+
+root=objectify.fromstring(response)
+
+print(my_wm_username)
+print(root['data'][num_periods]['value'])
+print(root['data'][num_periods]['mean'])
+print(root['data'][num_periods]['departure'])
+print(root['data'][num_periods]['lowRank'])
+print(root['data'][num_periods]['highRank'])
+
+
 #Scraping in HTML
 
+import requests
+from bs4 import BeautifulSoup as bsoup
+    
+search_url = 'http://publicinterestlegal.org/county-list/'
+response = requests.get(search_url, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"}).content
+            
 parsed_html = bsoup(response,"lxml")
 list = parsed_html.find_all('tr') #to get the headers
 
@@ -9,8 +43,6 @@ for row in list:
     for x in row.find_all('td'):
         new_list.append(x.text) #put the sublist in one place
     my_result_list.append(new_list) #add the sublist to the headers list
-    
-print(my_result_list)
 
 #Scraping using JSON
 
